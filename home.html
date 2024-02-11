@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<title>Chat Example</title>
+<script type="text/javascript">
+window.onload = function () {
+    var conn;
+    var msg = document.getElementById("msg");
+    var log = document.getElementById("log");
+
+    var left = false;
+    var right = false;
+    var up = false;
+    var down = false;
+
+    var x = 0;
+    var y = 0;
+
+    function appendLog(msg) {
+        var item = document.createElement("div");
+        item.innerText = msg;
+
+        var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
+        log.appendChild(item);
+        if (doScroll) {
+            log.scrollTop = log.scrollHeight - log.clientHeight;
+        }
+    }
+
+    document.addEventListener("keydown", (event) => {
+        if ( event.keyCode === 65) {
+            if (!left) {
+                left = true
+                send();
+            }
+        }
+        if (event.isComposing || event.keyCode === 68) {
+            if (!right) {
+                right = true
+                send();
+            }
+        }
+        if (event.isComposing || event.keyCode === 87) {
+            if (!up) {
+                up = true
+                send();
+            }
+            
+        }
+        if (event.isComposing || event.keyCode === 83) {
+            if (!down) {
+                down = true
+                send();
+            }
+        }
+    });
+
+    document.addEventListener("keyup", (event) => {
+        if (event.isComposing || event.keyCode === 65) {
+            left = false
+            send();
+        }
+        if (event.isComposing || event.keyCode === 68) {
+            right = false
+            send();
+        }
+        if (event.isComposing || event.keyCode === 87) {
+            up = false
+            send();
+        }
+        if (event.isComposing || event.keyCode === 83) {
+            down = false
+            send();
+        }
+    });
+
+
+    if (window["WebSocket"]) {
+        conn = new WebSocket("ws://" + document.location.host + "/ws");
+        conn.onclose = function (evt) {
+            appendLog('Connection closed');
+        };
+        conn.onmessage = function (evt) {
+            var messages = evt.data.split('\n');
+            for (var i = 0; i < messages.length; i++) {
+                appendLog(messages[i]);
+            }
+            k = evt.data.split(':');
+            y = k[2]
+            x = k[3]
+        };
+    } else {
+        appendLog('Your browser does not support WebSockets');
+    }
+
+    function send() {
+        binaryString = '';
+        var bytes = Array(4);
+        if (left) {
+            bytes[0] = 0x1;
+        } else {
+            bytes[0] = 0x0;
+        }
+        if (right) {
+            bytes[1] = 0x1;
+        } else {
+            bytes[1] = 0x0;
+        }
+        if (up) {
+            bytes[2] = 0x1;
+        } else {
+            bytes[2] = 0x0;
+        }
+        if (down) {
+            bytes[3] = 0x1;
+        } else {
+            bytes[3] = 0x0;
+        }
+        var length = bytes.length;
+        for (var i = 0; i < length; i++) {
+            binaryString += String.fromCharCode(bytes[i]);
+        }
+        //appendLog('send: ' + left + right + up + down);
+        conn.send(binaryString);
+    }
+    
+
+
+    var canvas = document.getElementById("canvas");
+    var ctx = this.canvas.getContext("2d");
+
+    function draw() {
+
+        ctx.fillStyle = "white";
+        ctx.fillRect(0,0, 500, 500);
+
+        ctx.fillStyle = "green";
+        ctx.fillRect(x,y, 10, 10);
+        setTimeout(draw, 10);
+    }
+
+    draw();
+};
+</script>
+
+</head>
+<body>
+    <div class="canvas_container">
+        <canvas id="canvas" width="500" height="500"></canvas>
+    </div>
+
+        <div id="log"></div>
+
+
+    <style type="text/css">
+        html {
+            overflow: hidden;
+        }
+        
+        body {
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            background: gray;
+            display:flex;
+        }
+
+        .canvas_container {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #log {
+            
+            background: white;
+            margin: 0;
+            padding: 0.5em 0.5em 0.5em 0.5em;
+            overflow: auto;
+            height: 400px;
+            width: 400px;
+            bottom:0px;
+            right: 0px;
+            position: absolute;
+        }
+        
+        </style>
+
+</body>
+</html>
