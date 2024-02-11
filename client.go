@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -56,6 +57,20 @@ type Client struct {
 
 	x int
 	y int
+}
+
+func newClient(hub *Hub, conn *websocket.Conn) *Client {
+	return &Client{hub: hub, conn: conn, send: make(chan []byte, 256), id: generateId()}
+}
+
+func generateId() []byte {
+	var letterBytes = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	n := 5
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return b
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -149,7 +164,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), id: []byte("1")}
+	client := newClient(hub, conn)
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in
