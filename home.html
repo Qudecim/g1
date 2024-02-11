@@ -16,6 +16,10 @@ window.onload = function () {
     var x = 0;
     var y = 0;
 
+    var id = '';
+
+    var players = [];
+
     function appendLog(msg) {
         var item = document.createElement("div");
         item.innerText = msg;
@@ -81,13 +85,39 @@ window.onload = function () {
             appendLog('Connection closed');
         };
         conn.onmessage = function (evt) {
-            var messages = evt.data.split('\n');
-            for (var i = 0; i < messages.length; i++) {
-                appendLog(messages[i]);
+            
+            var msg = evt.data;
+            appendLog(msg);
+            if (id == '') {
+                properties = evt.data.split(':');
+                if (properties[0] == 'id') {
+                    id = properties[1];
+                }
+                return;
             }
-            k = evt.data.split(':');
-            y = k[2]
-            x = k[3]
+            
+            objects = msg.split('&');
+            for (index in objects) {
+                
+                let object = objects[index]
+                if (object == '') {
+                    continue;
+                }
+
+                properties = object.split(':');
+                if (properties[0] == 'c') {
+                    player_id = properties[1]
+                    player_y = properties[2]
+                    player_x = properties[3]
+                    players[player_id] = {
+                        x: player_x,
+                        y: player_y
+                    }
+                    console.log(players)
+                }
+                
+
+            }
         };
     } else {
         appendLog('Your browser does not support WebSockets');
@@ -133,9 +163,12 @@ window.onload = function () {
 
         ctx.fillStyle = "white";
         ctx.fillRect(0,0, 500, 500);
-
-        ctx.fillStyle = "green";
-        ctx.fillRect(x,y, 10, 10);
+        for (player_id in players) {
+            player = players[player_id]
+            ctx.fillStyle = "green";
+            ctx.fillRect(player.x,player.y, 10, 10);
+        }
+        
         setTimeout(draw, 10);
     }
 
