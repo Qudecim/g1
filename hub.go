@@ -29,15 +29,16 @@ func newHub() *Hub {
 	}
 }
 
-func (h *Hub) run() {
+func (h *Hub) run(game *Game) {
 	for {
 		select {
 		case client := <-h.register:
 			h.clients[client] = true
-			s := append([]byte("id:"), client.id...)
+			s := append([]byte("id:"), client.player.id...)
 			client.send <- s
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
+				game.deletePlayer(client.player)
 				delete(h.clients, client)
 				close(client.send)
 			}

@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"time"
 
@@ -49,28 +48,11 @@ type Client struct {
 	// Buffered channel of outbound messages.
 	send chan []byte
 
-	id    []byte
-	left  bool
-	right bool
-	up    bool
-	down  bool
-
-	x float64
-	y float64
+	player *Player
 }
 
-func newClient(hub *Hub, conn *websocket.Conn) *Client {
-	return &Client{hub: hub, conn: conn, send: make(chan []byte, 256), id: generateId(), x: float64(250), y: float64(250)}
-}
-
-func generateId() []byte {
-	var letterBytes = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-	n := 5
-	b := make([]byte, n)
-	for i := range b {
-		b[i] = letterBytes[rand.Intn(len(letterBytes))]
-	}
-	return b
+func newClient(hub *Hub, conn *websocket.Conn, player *Player) *Client {
+	return &Client{hub: hub, conn: conn, send: make(chan []byte, 256), player: player}
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -96,19 +78,16 @@ func (c *Client) readPump() {
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		fmt.Println(message)
-		c.left = toBool(message[0])
-		c.right = toBool(message[1])
-		c.up = toBool(message[2])
-		c.down = toBool(message[3])
+		c.player.left = toBool(message[0])
+		c.player.right = toBool(message[1])
+		c.player.up = toBool(message[2])
+		c.player.down = toBool(message[3])
 
 	}
 }
 
 func toBool(i byte) bool {
-	if i == 1 {
-		return true
-	}
-	return false
+	return i == 1
 }
 
 // writePump pumps messages from the hub to the websocket connection.
@@ -158,13 +137,16 @@ func (c *Client) writePump() {
 }
 
 // serveWs handles websocket requests from the peer.
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request, game *Game) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	client := newClient(hub, conn)
+
+	player := newPlayer()
+	game.addPlayer(player)
+	client := newClient(hub, conn, player)
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

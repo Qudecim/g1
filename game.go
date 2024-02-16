@@ -8,23 +8,21 @@ import (
 )
 
 type Game struct {
-	zombies  []*Zombie
-	zombieId int
-	hub      *Hub
-}
-
-type Zombie struct {
-	id []byte
-	x  float64
-	y  float64
+	players map[*Player]bool
+	zombies map[*Zombie]bool
+	hub     *Hub
 }
 
 func newGame(hub *Hub) *Game {
-	return &Game{hub: hub}
+	return &Game{hub: hub, players: make(map[*Player]bool), zombies: make(map[*Zombie]bool)}
 }
 
-func newZombie(id []byte, x float64, y float64) *Zombie {
-	return &Zombie{id: id, x: x, y: y}
+func (g *Game) addPlayer(player *Player) {
+	g.players[player] = true
+}
+
+func (g *Game) deletePlayer(player *Player) {
+	delete(g.players, player)
 }
 
 func (g *Game) run() {
@@ -32,44 +30,59 @@ func (g *Game) run() {
 	for {
 		time.Sleep(time.Second / 30)
 
+		g.calc_weapon()
 		var s []byte
-		for client, _ := range g.hub.clients {
-			if s != nil {
-				d := []byte("&")
-				s = append(s, d...)
-			}
-			if client.left {
-				client.x--
-			}
-			if client.right {
-				client.x++
-			}
-			if client.up {
-				client.y--
-			}
-			if client.down {
-				client.y++
-			}
-			c := []byte("c:" + string(client.id) + ":" + strconv.Itoa(int(client.y)) + ":" + strconv.Itoa(int(client.x)))
-			s = append(s, c...)
-		}
-
-		s = append(s, g.zombie()...)
+		s = append(s, g.calc_players()...)
+		s = append(s, g.calc_zombies()...)
 
 		g.hub.broadcast <- s
 	}
 }
 
-func (g *Game) zombie() []byte {
+func (g *Game) calc_weapon() {
+	for player, _ := range g.players {
+		for _, weapon := range player.weapons {
+			weapon.calc(player, g)
+		}
+	}
+}
+
+func (g *Game) calc_players() []byte {
+	var s []byte
+	for player, _ := range g.players {
+		if s != nil {
+			d := []byte("&")
+			s = append(s, d...)
+		}
+		if player.left {
+			player.x--
+		}
+		if player.right {
+			player.x++
+		}
+		if player.up {
+			player.y--
+		}
+		if player.down {
+			player.y++
+		}
+		c := []byte("c:" + string(player.id) + ":" + strconv.Itoa(int(player.y)) + ":" + strconv.Itoa(int(player.x)))
+		s = append(s, c...)
+	}
+
+	return s
+}
+
+func (g *Game) calc_zombies() []byte {
 
 	var s []byte
-	for _, zombie := range g.zombies {
-		var closest *Client
+	for zombie, _ := range g.zombies {
+		var closest *Player
 		var closestRange float64 = 1000
-		for client, _ := range g.hub.clients {
-			d := distance(client.x, client.y, zombie.x, zombie.y)
+		for player, _ := range g.players {
+			d := distance(player.x, player.y, zombie.x, zombie.y)
 			if d < closestRange {
-				closest = client
+				closest = player
 				closestRange = d
 			}
 		}
@@ -89,7 +102,7 @@ func (g *Game) zombie() []byte {
 			newY := zombie.y + (dy/dist)*math.Min(maxSpeed, dist)
 
 			col := false
-			for _, zombieCol := range g.zombies {
+			for zombieCol, _ := range g.zombies {
 				if zombie == zombieCol {
 					continue
 				}
@@ -109,7 +122,7 @@ func (g *Game) zombie() []byte {
 
 		}
 
-		c := []byte("&z:" + string(zombie.id) + ":" + strconv.Itoa(int(zombie.y)) + ":" + strconv.Itoa(int(zombie.x)))
+		c := []byte("&z:" + string(zombie.id) + ":" + strconv.Itoa(int(zombie.y)) + ":" + strconv.Itoa(int(zombie.x)) + ":" + strconv.Itoa(int(zombie.hp)))
 		s = append(s, c...)
 	}
 	return s
@@ -117,23 +130,19 @@ func (g *Game) zombie() []byte {
 
 func (g *Game) generateZombie() {
 	col_distance := float64(10)
-	// r := rand.Intn(100)
-	// if r < 10 {
-	for i := 0; i < 200; i++ {
+	for i := 0; i < 100; i++ {
 		zombie := newZombie(generateId(), float64(rand.Intn(500)), float64(rand.Intn(500)))
 
 		col := false
-		for _, zombieCol := range g.zombies {
+		for zombieCol, _ := range g.zombies {
 			if distance(zombie.x, zombie.y, zombieCol.x, zombieCol.y) < col_distance {
 				col = true
 			}
 		}
 		if !col {
-			g.zombies = append(g.zombies, zombie)
+			g.zombies[zombie] = true
 		}
 	}
-
-	//}
 }
 
 func distance(x1 float64, y1 float64, x2 float64, y2 float64) float64 {

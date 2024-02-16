@@ -28,13 +28,15 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	flag.Parse()
+
 	hub := newHub()
-	go hub.run()
+	game := newGame(hub)
+	go hub.run(game)
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(hub, w, r)
+		serveWs(hub, w, r, game)
 	})
-	game := newGame(hub)
+
 	go game.run()
 	server := &http.Server{
 		Addr:              *addr,
