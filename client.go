@@ -60,7 +60,7 @@ type Client struct {
 }
 
 func newClient(hub *Hub, conn *websocket.Conn) *Client {
-	return &Client{hub: hub, conn: conn, send: make(chan []byte, 256), id: generateId()}
+	return &Client{hub: hub, conn: conn, send: make(chan []byte, 256), id: generateId(), x: float64(250), y: float64(250)}
 }
 
 func generateId() []byte {
