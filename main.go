@@ -34,8 +34,8 @@ func main() {
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
 	})
-	game := newGame()
-	go game.run(hub)
+	game := newGame(hub)
+	go game.run()
 	server := &http.Server{
 		Addr:              *addr,
 		ReadHeaderTimeout: 3 * time.Second,

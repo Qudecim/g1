@@ -19,6 +19,7 @@ window.onload = function () {
     var id = '';
 
     var players = [];
+    var zombies = [];
 
     function appendLog(msg) {
         var item = document.createElement("div");
@@ -113,7 +114,15 @@ window.onload = function () {
                         x: player_x,
                         y: player_y
                     }
-                    console.log(players)
+                }
+                if (properties[0] == 'z') {
+                    zobmie_id = properties[1]
+                    zobmie_y = properties[2]
+                    zobmie_x = properties[3]
+                    zombies[zobmie_id] = {
+                        x: zobmie_x,
+                        y: zobmie_y
+                    }
                 }
                 
 
@@ -165,8 +174,21 @@ window.onload = function () {
         ctx.fillRect(0,0, 500, 500);
         for (player_id in players) {
             player = players[player_id]
-            ctx.fillStyle = "green";
-            ctx.fillRect(player.x,player.y, 10, 10);
+            if (player_id == id) {
+                ctx.fillStyle = "blue";
+            } else {
+                ctx.fillStyle = "green";
+            }
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, 5, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+        for (zombie_id in zombies) {
+            zombie = zombies[zombie_id]
+            ctx.fillStyle = "red";
+            ctx.beginPath();
+            ctx.arc(zombie.x, zombie.y, 5, 0, 2 * Math.PI);
+            ctx.fill();
         }
         
         setTimeout(draw, 10);

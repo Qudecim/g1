@@ -55,8 +55,8 @@ type Client struct {
 	up    bool
 	down  bool
 
-	x int
-	y int
+	x float64
+	y float64
 }
 
 func newClient(hub *Hub, conn *websocket.Conn) *Client {
