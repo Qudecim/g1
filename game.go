@@ -179,7 +179,7 @@ func (g *Game) generateZombie() {
 
 	r := rand.Intn(100)
 	if r < 10 {
-		g.generateZombie()
+		g.addZombie()
 	}
 }
 
