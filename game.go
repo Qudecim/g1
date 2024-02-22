@@ -173,19 +173,19 @@ func (g *Game) calc_team() []byte {
 }
 
 func (g *Game) generateZombie() {
-	//for i := 0; i < 20; i++ {
-	//g.addZombie()
-	//}
-
-	r := rand.Intn(100)
-	if r < 10 {
+	for i := 0; i < 300; i++ {
 		g.addZombie()
 	}
+
+	// r := rand.Intn(100)
+	// if r < 10 {
+	// 	g.addZombie()
+	// }
 }
 
 func (g *Game) addZombie() {
 	col_distance := float64(10)
-	zombie := newZombie(generateId(), float64(rand.Intn(500)), float64(rand.Intn(500)))
+	zombie := newZombie(generateId(), float64(rand.Intn(1000)), float64(rand.Intn(1000)))
 	col := false
 	for zombieCol, _ := range g.zombies {
 		if distance(zombie.x, zombie.y, zombieCol.x, zombieCol.y) < col_distance {
