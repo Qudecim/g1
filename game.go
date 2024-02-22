@@ -32,8 +32,8 @@ func (g *Game) deleteZombie(zombie *Zombie) {
 }
 
 func (g *Game) run() {
+	g.generateZombie()
 	for {
-		g.generateZombie()
 		time.Sleep(time.Second / 30)
 
 		var s []byte
