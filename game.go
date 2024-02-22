@@ -185,7 +185,7 @@ func (g *Game) generateZombie() {
 
 func (g *Game) addZombie() {
 	col_distance := float64(10)
-	zombie := newZombie(generateId(), float64(rand.Intn(2000)), float64(rand.Intn(2000)))
+	zombie := newZombie(generateId(), float64(rand.Intn(800)), float64(rand.Intn(800)))
 	col := false
 	for zombieCol, _ := range g.zombies {
 		if distance(zombie.x, zombie.y, zombieCol.x, zombieCol.y) < col_distance {
