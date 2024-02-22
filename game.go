@@ -173,7 +173,7 @@ func (g *Game) calc_team() []byte {
 }
 
 func (g *Game) generateZombie() {
-	for i := 0; i < 300; i++ {
+	for i := 0; i < 100; i++ {
 		g.addZombie()
 	}
 
