@@ -134,7 +134,10 @@ window.onload = function () {
 
                 if (properties[0] == 'r') {
                     zombie_id = properties[1]
-                    zombies[zombie_id].isDeleted = true
+                    if (zombies[zombie_id] != undefined) {
+                        zombies[zombie_id].isDeleted = true
+                    }
+                    
                 }
 
                 if (properties[0] == 'w') {
