@@ -239,10 +239,12 @@ window.onload = function () {
             weapon = weapons[weapon_id]
             player = players[weapon.player]
             zombie = zombies[weapon.to]
-            ctx.beginPath();
-            ctx.moveTo(player.x, player.y); 
-            ctx.lineTo(zombie.x, zombie.y);
-            ctx.stroke()
+            if (zombies[weapon.to] != undefined) {
+                ctx.beginPath();
+                ctx.moveTo(player.x, player.y); 
+                ctx.lineTo(zombie.x, zombie.y);
+                ctx.stroke()
+            }
 
             weapons[weapon_id].frame++
             if (weapons[weapon_id].frame > 1) {
