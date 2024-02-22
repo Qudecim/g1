@@ -38,7 +38,7 @@ func (h *Hub) run(game *Game) {
 			client.send <- s
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
-				game.deletePlayer(client.player)
+				client.player.delete()
 				delete(h.clients, client)
 				close(client.send)
 			}

@@ -7,7 +7,7 @@ func newWeapon1(weapon_type int) *Weapon1 {
 	return &Weapon1{}
 }
 
-func (w *Weapon1) calc(player *Player, game *Game) {
+func (w *Weapon1) calc(player *Player, game *Game) []byte {
 	var closest *Zombie
 	var closestRange float64 = 1000
 	for zombie, _ := range game.zombies {
@@ -19,9 +19,9 @@ func (w *Weapon1) calc(player *Player, game *Game) {
 	}
 
 	if closest != nil {
-		r := closest.damage(20)
-		if r {
-			delete(game.zombies, closest)
-		}
+		closest.damage(20)
+		return []byte("&w:1:" + string(player.id) + ":" + string(closest.id))
 	}
+
+	return nil
 }

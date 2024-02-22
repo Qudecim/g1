@@ -20,6 +20,8 @@ window.onload = function () {
 
     var players = [];
     var zombies = [];
+    var weapons = [];
+    var updates = [];
 
     function appendLog(msg) {
         var item = document.createElement("div");
@@ -88,7 +90,7 @@ window.onload = function () {
         conn.onmessage = function (evt) {
             
             var msg = evt.data;
-            appendLog(msg);
+            //appendLog(msg);
             if (id == '') {
                 properties = evt.data.split(':');
                 if (properties[0] == 'id') {
@@ -121,15 +123,54 @@ window.onload = function () {
                     zobmie_x = properties[3]
                     zombies[zobmie_id] = {
                         x: zobmie_x,
-                        y: zobmie_y
+                        y: zobmie_y,
+                        isDeleted: false
                     }
                 }
-                
+                if (properties[0] == 'd') {
+                    player_id = properties[1]
+                    delete players[player_id]
+                }
 
+                if (properties[0] == 'r') {
+                    zombie_id = properties[1]
+                    zombies[zombie_id].isDeleted = true
+                }
+
+                if (properties[0] == 'w') {
+                    if (properties[1] == 1) {
+                        weapons.push({
+                            'type' : 1,
+                            'player' : properties[2],
+                            'to': properties[3], 
+                            'frame': 0
+                        })
+                    }
+                }
+
+                if (properties[0] == 'u') {
+                    if (properties[1] == id) {
+                        console.log(properties)
+                        updates.push([properties[2], properties[3], properties[4], properties[5]])
+                        showUpdates()
+                    }
+                }
+
+            
             }
         };
     } else {
         appendLog('Your browser does not support WebSockets');
+    }
+
+    function showUpdates() {
+        if (updates.length) {
+            for (let i = 1; i < 4; i++) {
+                let element1 = document.getElementById("update_" + i);
+                element1.innerHTML = 'weapon: 1 update:' + updates[0][i]
+            }
+            
+        }
     }
 
     function send() {
@@ -171,7 +212,7 @@ window.onload = function () {
     function draw() {
 
         ctx.fillStyle = "white";
-        ctx.fillRect(0,0, 500, 500);
+        ctx.fillRect(0,0, 1500, 800);
         for (player_id in players) {
             player = players[player_id]
             if (player_id == id) {
@@ -190,7 +231,30 @@ window.onload = function () {
             ctx.arc(zombie.x, zombie.y, 5, 0, 2 * Math.PI);
             ctx.fill();
         }
+
+        for (weapon_id in weapons) {
+            weapon = weapons[weapon_id]
+            player = players[weapon.player]
+            zombie = zombies[weapon.to]
+            ctx.beginPath();
+            ctx.moveTo(player.x, player.y); 
+            ctx.lineTo(zombie.x, zombie.y);
+            ctx.stroke()
+
+            weapons[weapon_id].frame++
+            if (weapons[weapon_id].frame > 1) {
+                weapons.splice(weapon_id, 1);
+            }
+        }
         
+
+        for (zombie_id in zombies) {
+            zombie = zombies[zombie_id]
+            if (zombie.isDeleted) {
+                delete zombies[zombie_id]
+            }
+        }
+
         setTimeout(draw, 10);
     }
 
@@ -201,12 +265,15 @@ window.onload = function () {
 </head>
 <body>
     <div class="canvas_container">
-        <canvas id="canvas" width="500" height="500"></canvas>
+        <canvas id="canvas" width="2000" height="800"></canvas>
     </div>
-    <h2>Управлять WASD</h2>
 
-        <div id="log"></div>
 
+    <div id="updates_container">
+        <div class="update_item" id="update_1">test</div>
+        <div class="update_item" id="update_2">test</div>
+        <div class="update_item" id="update_3">test</div>
+    </div>
 
     <style type="text/css">
         html {
@@ -227,18 +294,16 @@ window.onload = function () {
             width: 100%;
             height: 100%;
         }
-        
-        #log {
-            
-            background: white;
-            margin: 0;
-            padding: 0.5em 0.5em 0.5em 0.5em;
-            overflow: auto;
-            height: 400px;
-            width: 400px;
-            bottom:0px;
-            right: 0px;
+
+        #updates_container {
             position: absolute;
+            display: flex;
+            bottom: 0;
+            left: 50%;
+        }
+
+        .update_item {
+            padding: 20px;
         }
         
         </style>

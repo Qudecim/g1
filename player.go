@@ -1,7 +1,9 @@
 package main
 
 type Player struct {
-	id    []byte
+	id        []byte
+	isDeleted bool
+
 	left  bool
 	right bool
 	up    bool
@@ -10,12 +12,16 @@ type Player struct {
 	x float64
 	y float64
 
-	weapons []WeaponInterface
+	weapons []WeaponContainerInterface
 }
 
 func newPlayer() *Player {
 	player := &Player{id: generateId(), x: float64(250), y: float64(250)}
-	weapon := newWeapon1(0)
+	weapon := newWeaponContainer()
 	player.weapons = append(player.weapons, weapon)
 	return player
+}
+
+func (p *Player) delete() {
+	p.isDeleted = true
 }
