@@ -34,8 +34,7 @@ func (g *Game) deleteZombie(zombie *Zombie) {
 func (g *Game) run() {
 	g.generateZombie()
 	for {
-		time.Sleep(time.Second / 30)
-
+		startTime := time.Now()
 		var s []byte
 		s = append(s, g.calc_players()...)
 		s = append(s, g.calc_zombies()...)
@@ -43,13 +42,20 @@ func (g *Game) run() {
 		s = append(s, g.calc_team()...)
 
 		g.hub.broadcast <- s
+
+		endTime := time.Now()
+		difference := endTime.Sub(startTime)
+
+		spf := (time.Second / 30) - difference
+		time.Sleep(spf)
 	}
 }
 
 func (g *Game) calc_players() []byte {
-	playerSpeed := 3.00
+
 	var s []byte
 	for player, _ := range g.players {
+		playerSpeed := 5.00
 		if s != nil {
 			d := []byte("&")
 			s = append(s, d...)
@@ -61,7 +67,7 @@ func (g *Game) calc_players() []byte {
 			continue
 		}
 		if (player.left || player.right) && (player.up || player.down) {
-			playerSpeed = playerSpeed / 2
+			playerSpeed = (math.Sqrt(math.Pow(playerSpeed, 2)+math.Pow(playerSpeed, 2)) / 2)
 		}
 		if player.left {
 			player.x -= playerSpeed
@@ -173,7 +179,7 @@ func (g *Game) calc_team() []byte {
 }
 
 func (g *Game) generateZombie() {
-	for i := 0; i < 300; i++ {
+	for i := 0; i < 1; i++ {
 		g.addZombie()
 	}
 

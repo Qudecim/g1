@@ -74,12 +74,11 @@ window.onload = function () {
     if (window["WebSocket"]) {
         conn = new WebSocket("ws://" + document.location.host + "/ws");
         conn.onclose = function (evt) {
-            appendLog('Connection closed');
+            //appendLog('Connection closed');
         };
         conn.onmessage = function (evt) {
             
             var msg = evt.data;
-            //appendLog(msg);
             if (id == '') {
                 properties = evt.data.split(':');
                 if (properties[0] == 'id') {
@@ -101,10 +100,14 @@ window.onload = function () {
                     player_id = properties[1]
                     player_y = properties[2]
                     player_x = properties[3]
-                    players[player_id] = {
+                    if (players[player_id] == undefined) {
+                        players[player_id] = {
                         x: player_x,
                         y: player_y
                     }
+                    }
+                    players[player_id]['to_x'] = player_x
+                    players[player_id]['to_y'] = player_y
                 }
                 if (properties[0] == 'z') {
                     zobmie_id = properties[1]
@@ -142,7 +145,6 @@ window.onload = function () {
 
                 if (properties[0] == 'u') {
                     if (properties[1] == id) {
-                        console.log(properties)
                         updates.push([properties[2], properties[3], properties[4], properties[5]])
                         showUpdates()
                     }
@@ -151,8 +153,6 @@ window.onload = function () {
             
             }
         };
-    } else {
-        appendLog('Your browser does not support WebSockets');
     }
 
     function showUpdates() {
@@ -227,7 +227,6 @@ window.onload = function () {
         for (var i = 0; i < length; i++) {
             binaryString += String.fromCharCode(bytes[i]);
         }
-        //appendLog('send: ' + left + right + up + down);
         conn.send(binaryString);
     }
     
@@ -240,6 +239,7 @@ window.onload = function () {
 
         ctx.fillStyle = "white";
         ctx.fillRect(0,0, 1500, 800);
+
         for (player_id in players) {
             player = players[player_id]
             if (player_id == id) {
@@ -247,10 +247,17 @@ window.onload = function () {
             } else {
                 ctx.fillStyle = "green";
             }
+
+            let x = (player.to_x - player.x) / 4
+            player.x = (player.x*1) + (x*1)
+            let y = (player.to_y - player.y) / 4
+            player.y = (player.y*1) + (y*1)
+
             ctx.beginPath();
             ctx.arc(player.x, player.y, 5, 0, 2 * Math.PI);
             ctx.fill();
         }
+
         for (zombie_id in zombies) {
             zombie = zombies[zombie_id]
             ctx.fillStyle = "red";
@@ -276,7 +283,6 @@ window.onload = function () {
             }
         }
         
-
         for (zombie_id in zombies) {
             zombie = zombies[zombie_id]
             if (zombie.isDeleted) {
@@ -284,7 +290,7 @@ window.onload = function () {
             }
         }
 
-        setTimeout(draw, 10);
+        setTimeout(draw, 1000 / 60);
     }
 
     draw();
@@ -298,7 +304,7 @@ window.onload = function () {
     </div>
 
 
-    <div id="updates_container">
+    <div id="updates_container" class="un_show">
         <div class="update_item" id="update_1" onclick="sendUpdate1">test</div>
         <div class="update_item" id="update_2" onclick="sendUpdate2">test</div>
         <div class="update_item" id="update_3" onclick="sendUpdate3">test</div>
@@ -326,7 +332,6 @@ window.onload = function () {
 
         #updates_container {
             position: absolute;
-            display: none;
             bottom: 0;
             left: 50%;
         }
@@ -343,6 +348,10 @@ window.onload = function () {
             align-items: center;
             font-size: 18px;
             border: 1px solid #ddd;
+        }
+
+        .un_show {
+            display: none;
         }
 
         .show {
