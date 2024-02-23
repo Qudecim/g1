@@ -2,12 +2,13 @@
 <html lang="ru">
 <head>
 <title>Chat Example</title>
-<script type="text/javascript">
-window.onload = function () {
-    var conn;
-    var msg = document.getElementById("msg");
-    var log = document.getElementById("log");
+<script>
 
+var conn;
+var players = [];
+    var zombies = [];
+    var weapons = [];
+    var updates = [];
     var left = false;
     var right = false;
     var up = false;
@@ -18,10 +19,11 @@ window.onload = function () {
 
     var id = '';
 
-    var players = [];
-    var zombies = [];
-    var weapons = [];
-    var updates = [];
+window.onload = function () {
+
+
+
+ 
 
     document.addEventListener("keydown", (event) => {
         if ( event.keyCode === 65) {
@@ -155,49 +157,8 @@ window.onload = function () {
         };
     }
 
-    function showUpdates() {
-        if (updates.length) {
-            let element = document.getElementById("updates_container");
-            element.classList.add("show");
-            for (let i = 1; i < 4; i++) {
-                let element1 = document.getElementById("update_" + i);
-                element1.innerHTML = 'weapon: 1 update:' + updates[0][i]
-            }
-            
-        }
-    }
+ 
 
-
-    function sendUpdate1() {
-        let item = updates.shift();
-        sendUpdate(item[0], item[1]);
-    }
-    function sendUpdate2() {
-        let item = updates.shift();
-        sendUpdate(item[0], item[2]);
-    }
-    function sendUpdate3() {
-        let item = updates.shift();
-        sendUpdate(item[0], item[3]);
-    }
-
-    function sendUpdate(weapon, update) {
-        var bytes = Array(3);
-        bytes[0] = 0x1; // send update
-        bytes[1] = weapon;
-        bytes[2] = update;
-        var length = bytes.length;
-        for (var i = 0; i < length; i++) {
-            binaryString += String.fromCharCode(bytes[i]);
-        }
-        conn.send(binaryString);
-        let element = document.getElementById("updates_container");
-        element.classList.remove("show");
-        
-        if (updates.length) {
-            showUpdates()
-        }
-    }
 
     function send() {
         binaryString = '';
@@ -295,6 +256,58 @@ window.onload = function () {
 
     draw();
 };
+
+
+function sendUpdate1() {
+        let item = updates.shift();
+        sendUpdate(item[0], item[1]);
+    }
+    function sendUpdate2() {
+        let item = updates.shift();
+        sendUpdate(item[0], item[2]); 
+    }
+    function sendUpdate3() {
+        let item = updates.shift();
+        sendUpdate(item[0], item[3]);
+    }
+
+    function sendUpdate(weapon, update) {
+        console.log([weapon, update])
+        binaryString = '';
+        var bytes = Array(3);
+        bytes[0] = 0x1; // send update
+        bytes[1] = weapon;
+        bytes[2] = update;
+        var length = bytes.length;
+        for (var i = 0; i < length; i++) {
+            binaryString += String.fromCharCode(bytes[i]);
+        }
+        conn.send(binaryString);
+        let element = document.getElementById("updates_container");
+        element.classList.remove("show");
+        
+        if (updates.length) {
+            showUpdates()
+        }
+    }
+
+    function showUpdates() {
+        if (updates.length) {
+            let element = document.getElementById("updates_container");
+            element.classList.add("show");
+            for (let i = 1; i < 4; i++) {
+                let element1 = document.getElementById("update_" + i);
+                element1.innerHTML = 'weapon: 1 update:' + updates[0][i]
+            }
+            
+        }
+    }
+
+
+
+
+
+
 </script>
 
 </head>
@@ -305,9 +318,9 @@ window.onload = function () {
 
 
     <div id="updates_container" class="un_show">
-        <div class="update_item" id="update_1" onclick="sendUpdate1">test</div>
-        <div class="update_item" id="update_2" onclick="sendUpdate2">test</div>
-        <div class="update_item" id="update_3" onclick="sendUpdate3">test</div>
+        <div class="update_item" id="update_1" onclick="sendUpdate1()">test</div>
+        <div class="update_item" id="update_2" onclick="sendUpdate2()">test</div>
+        <div class="update_item" id="update_3" onclick="sendUpdate3()">test</div>
     </div>
 
     <style type="text/css">

@@ -1,10 +1,13 @@
 package main
 
 type Weapon1 struct {
+	damage         float64
+	criticalChance float64
+	criticalDamage float64
 }
 
-func newWeapon1(weapon_type int) *Weapon1 {
-	return &Weapon1{}
+func newWeapon1(damage float64, criticalChance float64, criticalDamage float64) *Weapon1 {
+	return &Weapon1{damage: damage, criticalChance: criticalChance, criticalDamage: criticalDamage}
 }
 
 func (w *Weapon1) calc(player *Player, game *Game) []byte {
@@ -19,7 +22,7 @@ func (w *Weapon1) calc(player *Player, game *Game) []byte {
 	}
 
 	if closest != nil {
-		closest.damage(20)
+		closest.damage(w.damage)
 		return []byte("&w:1:" + string(player.id) + ":" + string(closest.id))
 	}
 

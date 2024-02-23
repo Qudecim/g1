@@ -171,7 +171,7 @@ func (g *Game) calc_team() []byte {
 		g.team_points = 0
 		g.team_level++
 		for player, _ := range g.players {
-			c := []byte("&u:" + string(player.id) + ":0:" + strconv.Itoa(rand.Intn(10)) + ":" + strconv.Itoa(rand.Intn(10)) + ":" + strconv.Itoa(rand.Intn(10)))
+			c := []byte("&u:" + string(player.id) + ":1:" + strconv.Itoa(rand.Intn(4)) + ":" + strconv.Itoa(rand.Intn(4)) + ":" + strconv.Itoa(rand.Intn(4)))
 			s = append(s, c...)
 		}
 	}
@@ -179,7 +179,7 @@ func (g *Game) calc_team() []byte {
 }
 
 func (g *Game) generateZombie() {
-	for i := 0; i < 1; i++ {
+	for i := 0; i < 100; i++ {
 		g.addZombie()
 	}
 
