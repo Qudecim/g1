@@ -25,3 +25,7 @@ func newPlayer() *Player {
 func (p *Player) delete() {
 	p.isDeleted = true
 }
+
+func (p *Player) upgrade(weapon int, upgrade int) {
+
+}

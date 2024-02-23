@@ -1,6 +1,9 @@
 package main
 
-import "math/rand"
+import (
+	"math"
+	"math/rand"
+)
 
 func generateId() []byte {
 	var letterBytes = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -10,4 +13,8 @@ func generateId() []byte {
 		b[i] = letterBytes[rand.Intn(len(letterBytes))]
 	}
 	return b
+}
+
+func distance(x1 float64, y1 float64, x2 float64, y2 float64) float64 {
+	return math.Sqrt(math.Pow(x2-x1, 2) + math.Pow(y2-y1, 2))
 }

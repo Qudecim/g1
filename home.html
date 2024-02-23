@@ -23,17 +23,6 @@ window.onload = function () {
     var weapons = [];
     var updates = [];
 
-    function appendLog(msg) {
-        var item = document.createElement("div");
-        item.innerText = msg;
-
-        var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
-        log.appendChild(item);
-        if (doScroll) {
-            log.scrollTop = log.scrollHeight - log.clientHeight;
-        }
-    }
-
     document.addEventListener("keydown", (event) => {
         if ( event.keyCode === 65) {
             if (!left) {
@@ -168,6 +157,8 @@ window.onload = function () {
 
     function showUpdates() {
         if (updates.length) {
+            let element = document.getElementById("updates_container");
+            element.classList.add("show");
             for (let i = 1; i < 4; i++) {
                 let element1 = document.getElementById("update_" + i);
                 element1.innerHTML = 'weapon: 1 update:' + updates[0][i]
@@ -176,28 +167,61 @@ window.onload = function () {
         }
     }
 
+
+    function sendUpdate1() {
+        let item = updates.shift();
+        sendUpdate(item[0], item[1]);
+    }
+    function sendUpdate2() {
+        let item = updates.shift();
+        sendUpdate(item[0], item[2]);
+    }
+    function sendUpdate3() {
+        let item = updates.shift();
+        sendUpdate(item[0], item[3]);
+    }
+
+    function sendUpdate(weapon, update) {
+        var bytes = Array(3);
+        bytes[0] = 0x1; // send update
+        bytes[1] = weapon;
+        bytes[2] = update;
+        var length = bytes.length;
+        for (var i = 0; i < length; i++) {
+            binaryString += String.fromCharCode(bytes[i]);
+        }
+        conn.send(binaryString);
+        let element = document.getElementById("updates_container");
+        element.classList.remove("show");
+        
+        if (updates.length) {
+            showUpdates()
+        }
+    }
+
     function send() {
         binaryString = '';
-        var bytes = Array(4);
+        var bytes = Array(5);
+        bytes[0] = 0x0; // send move
         if (left) {
-            bytes[0] = 0x1;
-        } else {
-            bytes[0] = 0x0;
-        }
-        if (right) {
             bytes[1] = 0x1;
         } else {
             bytes[1] = 0x0;
         }
-        if (up) {
+        if (right) {
             bytes[2] = 0x1;
         } else {
             bytes[2] = 0x0;
         }
-        if (down) {
+        if (up) {
             bytes[3] = 0x1;
         } else {
             bytes[3] = 0x0;
+        }
+        if (down) {
+            bytes[4] = 0x1;
+        } else {
+            bytes[4] = 0x0;
         }
         var length = bytes.length;
         for (var i = 0; i < length; i++) {
@@ -275,9 +299,9 @@ window.onload = function () {
 
 
     <div id="updates_container">
-        <div class="update_item" id="update_1">test</div>
-        <div class="update_item" id="update_2">test</div>
-        <div class="update_item" id="update_3">test</div>
+        <div class="update_item" id="update_1" onclick="sendUpdate1">test</div>
+        <div class="update_item" id="update_2" onclick="sendUpdate2">test</div>
+        <div class="update_item" id="update_3" onclick="sendUpdate3">test</div>
     </div>
 
     <style type="text/css">
@@ -302,13 +326,27 @@ window.onload = function () {
 
         #updates_container {
             position: absolute;
-            display: flex;
+            display: none;
             bottom: 0;
             left: 50%;
         }
 
         .update_item {
             padding: 20px;
+            margin: 10px;
+            border-radius: 5px;
+            background: #fff;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            border: 1px solid #ddd;
+        }
+
+        .show {
+            display: flex;
         }
         
         </style>

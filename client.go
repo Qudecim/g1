@@ -78,10 +78,15 @@ func (c *Client) readPump() {
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		fmt.Println(message)
-		c.player.left = toBool(message[0])
-		c.player.right = toBool(message[1])
-		c.player.up = toBool(message[2])
-		c.player.down = toBool(message[3])
+		if message[0] == 0x0 { // move
+			c.player.left = toBool(message[1])
+			c.player.right = toBool(message[2])
+			c.player.up = toBool(message[3])
+			c.player.down = toBool(message[4])
+		}
+		if message[0] == 0x1 { // update
+			c.player.upgrade(int(message[1]), int(message[2]))
+		}
 
 	}
 }
