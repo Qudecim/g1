@@ -32,6 +32,10 @@ func main() {
 	hub := newHub()
 	game := newGame(hub)
 	go hub.run(game)
+
+	fs := http.FileServer(http.Dir("./data"))
+	http.Handle("/data/", http.StripPrefix("/data/", fs))
+
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r, game)

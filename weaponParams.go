@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -22,8 +21,6 @@ func newWeaponParams() *WeaponParams {
 }
 
 func (w *WeaponParams) upgrade(player *Player, weapon int, upgrade int) {
-	fmt.Println(weapon)
-	fmt.Println(upgrade)
 	if weapon == 1 {
 		switch upgrade {
 		case 1:

@@ -55,7 +55,6 @@ func (g *Game) calc_players() []byte {
 
 	var s []byte
 	for player, _ := range g.players {
-		playerSpeed := 5.00
 		if s != nil {
 			d := []byte("&")
 			s = append(s, d...)
@@ -66,20 +65,21 @@ func (g *Game) calc_players() []byte {
 			g.deletePlayer(player)
 			continue
 		}
+		speed := player.maxSpeed
 		if (player.left || player.right) && (player.up || player.down) {
-			playerSpeed = (math.Sqrt(math.Pow(playerSpeed, 2)+math.Pow(playerSpeed, 2)) / 2)
+			speed = (math.Sqrt(math.Pow(speed, 2)+math.Pow(speed, 2)) / 2)
 		}
 		if player.left {
-			player.x -= playerSpeed
+			player.x -= speed
 		}
 		if player.right {
-			player.x += playerSpeed
+			player.x += speed
 		}
 		if player.up {
-			player.y -= playerSpeed
+			player.y -= speed
 		}
 		if player.down {
-			player.y += playerSpeed
+			player.y += speed
 		}
 
 		c := []byte("c:" + string(player.id) + ":" + strconv.Itoa(int(player.y)) + ":" + strconv.Itoa(int(player.x)))
@@ -125,7 +125,7 @@ func (g *Game) calc_zombies() []byte {
 		}
 		if closest != nil {
 			maxSpeed := float64(1)
-			col_distance := float64(10)
+			col_distance := float64(30)
 
 			dx := closest.x - zombie.x
 			dy := closest.y - zombie.y
@@ -190,7 +190,7 @@ func (g *Game) generateZombie() {
 }
 
 func (g *Game) addZombie() {
-	col_distance := float64(10)
+	col_distance := float64(30)
 	zombie := newZombie(generateId(), float64(rand.Intn(800)), float64(rand.Intn(800)))
 	col := false
 	for zombieCol, _ := range g.zombies {

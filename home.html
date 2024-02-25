@@ -19,11 +19,15 @@ var players = [];
 
     var id = '';
 
+    var loadImages = false;
+
+    var tomato = new Image();
+    tomato.src = '/data/tomato.png'
+    tomato.onload = function() {
+        loadImages = true;
+            }
+
 window.onload = function () {
-
-
-
- 
 
     document.addEventListener("keydown", (event) => {
         if ( event.keyCode === 65) {
@@ -157,8 +161,6 @@ window.onload = function () {
         };
     }
 
- 
-
 
     function send() {
         binaryString = '';
@@ -201,6 +203,11 @@ window.onload = function () {
         ctx.fillStyle = "white";
         ctx.fillRect(0,0, 1500, 800);
 
+        if (!loadImages) {
+            setTimeout(draw, 1000 / 60);
+            return
+        }
+
         for (player_id in players) {
             player = players[player_id]
             if (player_id == id) {
@@ -221,10 +228,10 @@ window.onload = function () {
 
         for (zombie_id in zombies) {
             zombie = zombies[zombie_id]
-            ctx.fillStyle = "red";
-            ctx.beginPath();
-            ctx.arc(zombie.x, zombie.y, 5, 0, 2 * Math.PI);
-            ctx.fill();
+            
+
+
+            ctx.drawImage(tomato, 0, 0, 100, 100, zombie.x - 25, zombie.y - 25, 50, 50)
         }
 
         for (weapon_id in weapons) {
