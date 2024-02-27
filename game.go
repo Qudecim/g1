@@ -123,9 +123,10 @@ func (g *Game) calc_zombies() []byte {
 				closestRange = d
 			}
 		}
+		dir_is_right := "1"
 		if closest != nil {
 			maxSpeed := float64(1)
-			col_distance := float64(30)
+			col_distance := float64(40)
 
 			dx := closest.x - zombie.x
 			dy := closest.y - zombie.y
@@ -157,9 +158,13 @@ func (g *Game) calc_zombies() []byte {
 				zombie.y = newY
 			}
 
+			zombie.direction_is_right = closest.x > zombie.x
+			if !zombie.direction_is_right {
+				dir_is_right = "0"
+			}
 		}
 
-		c := []byte("&z:" + string(zombie.id) + ":" + strconv.Itoa(int(zombie.y)) + ":" + strconv.Itoa(int(zombie.x)) + ":" + strconv.Itoa(int(zombie.hp)))
+		c := []byte("&z:" + string(zombie.id) + ":" + strconv.Itoa(int(zombie.y)) + ":" + strconv.Itoa(int(zombie.x)) + ":" + dir_is_right)
 		s = append(s, c...)
 	}
 	return s
@@ -190,7 +195,7 @@ func (g *Game) generateZombie() {
 }
 
 func (g *Game) addZombie() {
-	col_distance := float64(30)
+	col_distance := float64(40)
 	zombie := newZombie(generateId(), float64(rand.Intn(800)), float64(rand.Intn(800)))
 	col := false
 	for zombieCol, _ := range g.zombies {

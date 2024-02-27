@@ -8,7 +8,8 @@ type Zombie struct {
 	y  float64
 	hp float64
 
-	points int
+	points             int
+	direction_is_right bool
 }
 
 func newZombie(id []byte, x float64, y float64) *Zombie {
