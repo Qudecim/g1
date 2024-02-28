@@ -23,7 +23,7 @@ func (w *Weapon1) calc(player *Player, game *Game) []byte {
 
 	if closest != nil {
 		closest.damage(w.damage)
-		return []byte("&w:1:" + string(player.id) + ":" + string(closest.id))
+		return []byte("&w:a:" + string(player.id) + ":" + string(closest.id))
 	}
 
 	return nil

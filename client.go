@@ -85,7 +85,7 @@ func (c *Client) readPump() {
 			c.player.down = toBool(message[4])
 		}
 		if message[0] == 0x1 { // update
-			c.player.upgrade(int(message[1]), int(message[2]))
+			c.player.upgrade(int(message[1]), int(message[2])) // TODO: get only update
 		}
 
 	}

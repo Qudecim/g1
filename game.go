@@ -82,7 +82,7 @@ func (g *Game) calc_players() []byte {
 			player.y += speed
 		}
 
-		c := []byte("c:" + string(player.id) + ":" + strconv.Itoa(int(player.y)) + ":" + strconv.Itoa(int(player.x)))
+		c := []byte("c:" + string(player.id) + ":" + strconv.Itoa(int(player.x)) + ":" + strconv.Itoa(int(player.y)))
 
 		s = append(s, c...)
 	}
@@ -164,7 +164,7 @@ func (g *Game) calc_zombies() []byte {
 			}
 		}
 
-		c := []byte("&z:" + string(zombie.id) + ":" + strconv.Itoa(int(zombie.y)) + ":" + strconv.Itoa(int(zombie.x)) + ":" + dir_is_right)
+		c := []byte("&z:a:" + string(zombie.id) + ":" + strconv.Itoa(int(zombie.x)) + ":" + strconv.Itoa(int(zombie.y)) + ":" + dir_is_right)
 		s = append(s, c...)
 	}
 	return s
@@ -176,7 +176,7 @@ func (g *Game) calc_team() []byte {
 		g.team_points = 0
 		g.team_level++
 		for player, _ := range g.players {
-			c := []byte("&u:" + string(player.id) + ":1:" + strconv.Itoa(rand.Intn(4)) + ":" + strconv.Itoa(rand.Intn(4)) + ":" + strconv.Itoa(rand.Intn(4)))
+			c := []byte("&u:" + string(player.id) + strconv.Itoa(rand.Intn(4)) + ":" + strconv.Itoa(rand.Intn(4)) + ":" + strconv.Itoa(rand.Intn(4)))
 			s = append(s, c...)
 		}
 	}

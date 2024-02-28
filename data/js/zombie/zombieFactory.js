@@ -1,17 +1,18 @@
 class ZombieFactory {
     
-    static make(name) {
+    static make(type) {
         let zombie = null
-        switch (name) {
+        switch (type) {
             case 'a':
-                zombie = ZombieA.build()
+                zombie = ZombieA.create()
                 break;
             case 4:
                 alert( 'В точку!' );
                 break;
             default:
-                console.log('Wrong zombie: ' + name)
+                console.log('Wrong zombie: ' + type)
           }
+        return zombie
     }
 
 }

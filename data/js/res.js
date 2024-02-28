@@ -3,11 +3,11 @@ class Res {
     zombies = {
         a: {
             left: {
-                src: '/data/z_1_l.png',
+                src: '/data/src/z_1_l.png',
                 img: null
             },
             right: {
-                src: '/data/z_1_l.png',
+                src: '/data/src/z_1_r.png',
                 img: null
             }
         }
@@ -16,28 +16,28 @@ class Res {
     init() {
         let loaded = 0
         let need = 0
-        for (zombie_name in this.zombies) {
-            for (action_name in this.zombies[zombie_name]) {
+        for (let zombie_type in this.zombies) {
+            for (let action_name in this.zombies[zombie_type]) {
                 need++
                 let img = new Image();
-                img.src = this.zombies[zombie_name][action_name].src
+                img.src = this.zombies[zombie_type][action_name].src
                 img.onload = function() {
                     loaded++
                     if (loaded == need) {
                         game.resources_loaded = true
                     }
                 }
-                this.zombies[zombie_name][action_name].img = img
+                this.zombies[zombie_type][action_name].img = img
             }
         }
     }
 
-    getZombie(name, directionIsRight) {
+    getZombie(type, directionIsRight) {
         let action = 'left'
         if (directionIsRight) {
             action = 'right'
         }
-        return this.zombies[name][action].img
+        return this.zombies[type][action].img
     }
 
 }

@@ -8,19 +8,30 @@ class Main {
         res.init()
 
         game = new Game(canvas, ctx)
-        tansport = new Transport()
+
+        transport = new Transport()
         transport.init()
+        
         control = new Control()
         control.init()
 
+        ui = new UI()
+
+        main_tic()
     }
 
-} 
+}
+
+function main_tic() {
+    game.draw()
+    setTimeout(main_tic, 1000 / 60);
+}
 
 res = null
 game = null
 transport = null
 control = null
+ui = null
 
 window.onload = function () {
     if (window["WebSocket"]) {
