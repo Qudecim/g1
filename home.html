@@ -9,10 +9,12 @@
         <canvas id="canvas" width="2000" height="800"></canvas>
     </div>
 
+    <div class="dom_fps">FPS:<span id="domFPS"></span></div>
+
     <div id="updates_container" class="un_show">
-        <div class="update_item" id="update_1" onclick="sendUpdate1()">test</div>
-        <div class="update_item" id="update_2" onclick="sendUpdate2()">test</div>
-        <div class="update_item" id="update_3" onclick="sendUpdate3()">test</div>
+        <div class="update_item" id="update_0" onclick="ui.sendUpdate1(0)">test</div>
+        <div class="update_item" id="update_1" onclick="ui.sendUpdate1(1)">test</div>
+        <div class="update_item" id="update_2" onclick="ui.sendUpdate1(2)">test</div>
     </div>
 
     <script src="data/js/main.js"></script>

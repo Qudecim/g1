@@ -44,3 +44,9 @@ body {
 .show {
     display: flex;
 }
+
+.dom_fps {
+    position: absolute;
+    right: 0;
+    top: 0;
+}

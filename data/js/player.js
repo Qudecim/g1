@@ -21,10 +21,7 @@ class Player {
     }
 
     draw() {
-        game.ctx.fillStyle = "blue";
-        game.ctx.beginPath();
-        game.ctx.arc(this.x, this.y, 5, 0, 2 * Math.PI);
-        game.ctx.fill();
+        game.ctx.drawImage(res.getPlayer('a', this.directionIsRight), 0, 0, 100, 100, this.x - 25, this.y - 25, 50, 50)
     }
 
 }

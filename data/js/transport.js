@@ -10,57 +10,62 @@ class Transport {
         let current_instance = this
 
         this.connection.onmessage = function (evt) {
-            let msg = evt.data;
-            if (game.id == null) {
-                let properties = evt.data.split(':');
-                if (properties[0] == 'id') {
-                    game.id = properties[1];
+            let messages = evt.data.split('\n');
+            for (var i = 0; i < messages.length; i++) {
+                let msg = messages[i]
+                if (game.id == null) {
+                    let properties = evt.data.split(':');
+                    if (properties[0] == 'id') {
+                        game.id = properties[1];
+                    }
+                    return;
                 }
-                return;
-            }
-            
-            let objects = msg.split('&');
-            for (let index in objects) {
                 
-                let object = objects[index]
-                if (object == '') {
-                    continue;
-                }
+                let objects = msg.split('&');
+                for (let index in objects) {
+                    
+                    let object = objects[index]
+                    if (object == '') {
+                        continue;
+                    }
 
-                let properties = object.split(':');
+                    let properties = object.split(':');
 
-                switch (properties[0]) {
-                    case 'c':
-                        current_instance.getPlayer(properties[1], properties[2], properties[3])
-                        break;
-                    case 'd':
-                        current_instance.diePlayer(properties[1])
-                        break;
-                    case 'z':
-                        current_instance.getZombie(properties[1], properties[2], properties[3], properties[4], properties[5])
-                        break;
-                    case 'r':
-                        current_instance.dieZombie(properties[1])
-                        break;
-                    case 'w':
-                        current_instance.getWeapon(properties[1], properties[2], [properties[3]]) // TODO: make slice for props
-                        break;
-                    case 'u':
-                        current_instance.getUpgrades(properties[1], properties[2], properties[3])
-                        break;
-                    default:
-                        console.log('Wrong action: ' + properties[0])
+                    switch (properties[0]) {
+                        case 'c':
+                            current_instance.getPlayer(properties[1], properties[2], properties[3], properties[4])
+                            break;
+                        case 'd':
+                            current_instance.diePlayer(properties[1])
+                            break;
+                        case 'z':
+                            current_instance.getZombie(properties[1], properties[2], properties[3], properties[4], properties[5])
+                            break;
+                        case 'r':
+                            current_instance.dieZombie(properties[1])
+                            break;
+                        case 'w':
+                            current_instance.getWeapon(properties[1], properties[2], [properties[3]]) // TODO: make slice for props
+                            break;
+                        case 'u':
+                            console.log(msg)
+                            current_instance.getUpgrades(properties[1], properties[2], properties[3])
+                            break;
+                        default:
+                            console.log('Wrong action: ' + properties[0])
+                    }
                 }
             }
         }
     }
 
-    getPlayer(id,  x, y) {
+    getPlayer(id, directionIsRight, x, y) {
         if (game.players[id] == undefined) {
             game.players[id] = Player.create()
         }
         game.players[id].to_x = x
         game.players[id].to_y = y
+        game.players[id].directionIsRight = directionIsRight == '1'
     }
     
     diePlayer(id) {
@@ -91,7 +96,7 @@ class Transport {
     }
 
     getUpgrades(u1, u2, u3) {
-        game.upgrades.push(u1, u2, u3)
+        game.upgrades.push([u1, u2, u3])
         ui.showUpdates()
     }
 
@@ -127,10 +132,10 @@ class Transport {
     }
 
     sendUpdate(update) {
-        binaryString = '';
-        var bytes = Array(2);
+        let binaryString = '';
+        var bytes = new Uint8Array(2);
         bytes[0] = 0x1; // send update
-        bytes[1] = update;
+        bytes[1] = update
         var length = bytes.length;
         for (var i = 0; i < length; i++) {
             binaryString += String.fromCharCode(bytes[i]);
@@ -139,7 +144,7 @@ class Transport {
         let element = document.getElementById("updates_container");
         element.classList.remove("show");
         
-        if (game.updates.length) {
+        if (game.upgrades.length) {
             ui.showUpdates()
         }
     }

@@ -39,7 +39,7 @@ func (g *Game) run() {
 		s = append(s, g.calc_players()...)
 		s = append(s, g.calc_zombies()...)
 		s = append(s, g.calc_weapons()...)
-		s = append(s, g.calc_team()...)
+		g.calc_team()
 
 		g.hub.broadcast <- s
 
@@ -71,9 +71,11 @@ func (g *Game) calc_players() []byte {
 		}
 		if player.left {
 			player.x -= speed
+			player.direction_is_right = false
 		}
 		if player.right {
 			player.x += speed
+			player.direction_is_right = true
 		}
 		if player.up {
 			player.y -= speed
@@ -82,7 +84,14 @@ func (g *Game) calc_players() []byte {
 			player.y += speed
 		}
 
-		c := []byte("c:" + string(player.id) + ":" + strconv.Itoa(int(player.x)) + ":" + strconv.Itoa(int(player.y)))
+		var dirIsRight string
+		if player.direction_is_right {
+			dirIsRight = "1"
+		} else {
+			dirIsRight = "0"
+		}
+
+		c := []byte("c:" + string(player.id) + ":" + dirIsRight + ":" + strconv.Itoa(int(player.x)) + ":" + strconv.Itoa(int(player.y)))
 
 		s = append(s, c...)
 	}
@@ -126,7 +135,7 @@ func (g *Game) calc_zombies() []byte {
 		dir_is_right := "1"
 		if closest != nil {
 			maxSpeed := float64(1)
-			col_distance := float64(40)
+			col_distance := float64(25)
 
 			dx := closest.x - zombie.x
 			dy := closest.y - zombie.y
@@ -170,21 +179,21 @@ func (g *Game) calc_zombies() []byte {
 	return s
 }
 
-func (g *Game) calc_team() []byte {
-	var s []byte
+func (g *Game) calc_team() {
 	if g.team_points >= g.team_level*10 {
 		g.team_points = 0
 		g.team_level++
+
 		for player, _ := range g.players {
-			c := []byte("&u:" + string(player.id) + strconv.Itoa(rand.Intn(4)) + ":" + strconv.Itoa(rand.Intn(4)) + ":" + strconv.Itoa(rand.Intn(4)))
-			s = append(s, c...)
+			ups := getUpgrades(player)
+			c := []byte("u:" + strconv.Itoa(ups[0]) + ":" + strconv.Itoa(ups[1]) + ":" + strconv.Itoa(ups[2]))
+			player.client.send <- c
 		}
 	}
-	return s
 }
 
 func (g *Game) generateZombie() {
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 500; i++ {
 		g.addZombie()
 	}
 
@@ -196,7 +205,7 @@ func (g *Game) generateZombie() {
 
 func (g *Game) addZombie() {
 	col_distance := float64(40)
-	zombie := newZombie(generateId(), float64(rand.Intn(800)), float64(rand.Intn(800)))
+	zombie := newZombie(generateId(), float64(rand.Intn(1500)), float64(rand.Intn(800)))
 	col := false
 	for zombieCol, _ := range g.zombies {
 		if distance(zombie.x, zombie.y, zombieCol.x, zombieCol.y) < col_distance {

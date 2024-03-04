@@ -1,16 +1,16 @@
 package main
 
-type Weapon1 struct {
+type WeaponATile struct {
 	damage         float64
 	criticalChance float64
 	criticalDamage float64
 }
 
-func newWeapon1(damage float64, criticalChance float64, criticalDamage float64) *Weapon1 {
-	return &Weapon1{damage: damage, criticalChance: criticalChance, criticalDamage: criticalDamage}
+func newWeaponATile(damage float64, criticalChance float64, criticalDamage float64) *WeaponATile {
+	return &WeaponATile{damage: damage, criticalChance: criticalChance, criticalDamage: criticalDamage}
 }
 
-func (w *Weapon1) calc(player *Player, game *Game) []byte {
+func (w *WeaponATile) calc(player *Player, game *Game) []byte {
 	var closest *Zombie
 	var closestRange float64 = 1000
 	for zombie, _ := range game.zombies {

@@ -13,6 +13,19 @@ class Res {
         }
     }
 
+    players = {
+        a: {
+            left: {
+                src: '/data/src/p_1_l.png',
+                img: null
+            },
+            right: {
+                src: '/data/src/p_1_r.png',
+                img: null
+            }
+        }
+    }
+
     init() {
         let loaded = 0
         let need = 0
@@ -30,6 +43,20 @@ class Res {
                 this.zombies[zombie_type][action_name].img = img
             }
         }
+        for (let player_type in this.players) {
+            for (let action_name in this.players[player_type]) {
+                need++
+                let img = new Image();
+                img.src = this.players[player_type][action_name].src
+                img.onload = function() {
+                    loaded++
+                    if (loaded == need) {
+                        game.resources_loaded = true
+                    }
+                }
+                this.players[player_type][action_name].img = img
+            }
+        }
     }
 
     getZombie(type, directionIsRight) {
@@ -38,6 +65,14 @@ class Res {
             action = 'right'
         }
         return this.zombies[type][action].img
+    }
+
+    getPlayer(type, directionIsRight) {
+        let action = 'left'
+        if (directionIsRight) {
+            action = 'right'
+        }
+        return this.players[type][action].img
     }
 
 }

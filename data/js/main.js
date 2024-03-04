@@ -24,7 +24,8 @@ class Main {
 
 function main_tic() {
     game.draw()
-    setTimeout(main_tic, 1000 / 60);
+    requestAnimationFrame(main_tic);
+    //setTimeout(main_tic, 1000 / 60);
 }
 
 res = null

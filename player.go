@@ -3,11 +3,13 @@ package main
 type Player struct {
 	id        []byte
 	isDeleted bool
+	client    *Client
 
-	left  bool
-	right bool
-	up    bool
-	down  bool
+	left               bool
+	right              bool
+	up                 bool
+	down               bool
+	direction_is_right bool
 
 	x float64
 	y float64
@@ -44,23 +46,19 @@ func (p *Player) delete() {
 	p.isDeleted = true
 }
 
-func (p *Player) upgrade(weapon int, upgrade int) {
-	if upgrade == 0 {
-		p.upgrade_player(upgrade)
-	} else {
-		p.weaponParams.upgrade(p, weapon, upgrade)
-	}
+func playerGetUpgrades() []int {
+	return []int{1, 2, 3, 4}
 }
 
-func (p *Player) upgrade_player(upgrade int) {
+func playerUpgrade(player *Player, upgrade int) {
 	switch upgrade {
 	case 1:
-		p.maxSpeed = p.maxSpeed * 2
+		player.maxSpeed = player.maxSpeed * 2
 	case 2:
-		p.maxHP = p.maxHP + 10
+		player.maxHP = player.maxHP + 10
 	case 3:
-		p.evasion = p.evasion + 1
+		player.evasion = player.evasion + 1
 	case 4:
-		p.armor = p.armor + 1
+		player.armor = player.armor + 1
 	}
 }

@@ -5,7 +5,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"log"
 	"net/http"
@@ -69,14 +68,15 @@ func (c *Client) readPump() {
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		_, message, err := c.conn.ReadMessage()
+		msg_type, message, err := c.conn.ReadMessage()
+		fmt.Println(msg_type)
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		//message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		fmt.Println(message)
 		if message[0] == 0x0 { // move
 			c.player.left = toBool(message[1])
@@ -85,7 +85,7 @@ func (c *Client) readPump() {
 			c.player.down = toBool(message[4])
 		}
 		if message[0] == 0x1 { // update
-			c.player.upgrade(int(message[1]), int(message[2])) // TODO: get only update
+			upgrade(c.player, int(message[1])) // TODO: get only update
 		}
 
 	}
@@ -152,6 +152,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request, game *Game) {
 	player := newPlayer()
 	game.addPlayer(player)
 	client := newClient(hub, conn, player)
+	player.client = client
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in
