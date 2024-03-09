@@ -35,7 +35,7 @@ class Game {
         transport.send();
     }
 
-    draw() {
+    draw(deltaTime) {
 
         let now = new Date().getTime()
         let fps = now - this.step_fps;
@@ -48,7 +48,7 @@ class Game {
             this._fps = 0;
         }
         
-        this.ctx.fillStyle = "white";
+        this.ctx.fillStyle = "#27ae60";
         this.ctx.fillRect(0,0, 1500, 800);
 
         if (!this.resources_loaded) {
@@ -75,7 +75,7 @@ class Game {
             //player.draw()
             for(let weapon_id in player.weapons) {
                 let weapon = player.weapons[weapon_id]
-                weapon.draw()
+                weapon.draw(deltaTime)
                 if (weapon.isFinished) {
                     player.weapons.splice(weapon_id, 1);
                 }

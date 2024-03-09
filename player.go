@@ -14,8 +14,7 @@ type Player struct {
 	x float64
 	y float64
 
-	weapons      map[int]WeaponContainerInterface
-	weaponParams *WeaponParams
+	weapons map[string]WeaponInterface
 
 	hp       float64
 	maxSpeed float64
@@ -26,24 +25,33 @@ type Player struct {
 
 func newPlayer() *Player {
 	player := &Player{
-		id:           generateId(),
-		x:            float64(250),
-		y:            float64(250),
-		weapons:      make(map[int]WeaponContainerInterface),
-		weaponParams: newWeaponParams(),
-		hp:           10,
-		maxSpeed:     2,
-		maxHP:        10,
-		evasion:      1,
-		armor:        1,
+		id:       generateId(),
+		x:        float64(250),
+		y:        float64(250),
+		weapons:  make(map[string]WeaponInterface),
+		hp:       10,
+		maxSpeed: 2,
+		maxHP:    10,
+		evasion:  1,
+		armor:    1,
 	}
 	weapon := newWeaponContainer()
-	player.weapons[1] = weapon
+	player.weapons["a"] = weapon
 	return player
 }
 
 func (p *Player) delete() {
 	p.isDeleted = true
+}
+
+func (p *Player) hasWeapon(weaponKind string) bool {
+	_, has := p.weapons[weaponKind]
+	return has
+}
+
+func (p *Player) getWeapon(weaponKind string) WeaponInterface {
+	weapon, _ := p.weapons[weaponKind]
+	return weapon
 }
 
 func playerGetUpgrades() []int {

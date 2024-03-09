@@ -6,11 +6,11 @@ class ZombieFactory {
             case 'a':
                 zombie = ZombieA.create()
                 break;
-            case 4:
-                alert( 'В точку!' );
+            case 'b':
+                zombie = ZombieB.create()
                 break;
             default:
-                console.log('Wrong zombie: ' + type)
+                console.log('Wrong zombie: "' + type + '"')
           }
         return zombie
     }

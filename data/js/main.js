@@ -17,13 +17,20 @@ class Main {
 
         ui = new UI()
 
-        main_tic()
+        requestAnimationFrame(function(currentTime) {
+            lastFrameTime = currentTime;
+            main_tic(currentTime);
+        });
     }
 
 }
 
-function main_tic() {
-    game.draw()
+function main_tic(currentTime) {
+    var deltaTime = (currentTime - lastFrameTime) / 1000;
+
+    game.draw(deltaTime)
+
+    lastFrameTime = currentTime;
     requestAnimationFrame(main_tic);
     //setTimeout(main_tic, 1000 / 60);
 }
@@ -33,6 +40,8 @@ game = null
 transport = null
 control = null
 ui = null
+
+lastFrameTime = 0
 
 window.onload = function () {
     if (window["WebSocket"]) {

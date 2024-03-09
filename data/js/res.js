@@ -3,11 +3,21 @@ class Res {
     zombies = {
         a: {
             left: {
-                src: '/data/src/z_1_l.png',
+                src: '/data/src/z_a_l.png',
                 img: null
             },
             right: {
-                src: '/data/src/z_1_r.png',
+                src: '/data/src/z_a_r.png',
+                img: null
+            }
+        },
+        b: {
+            left: {
+                src: '/data/src/z_b_l.png',
+                img: null
+            },
+            right: {
+                src: '/data/src/z_b_r.png',
                 img: null
             }
         }
@@ -23,6 +33,13 @@ class Res {
                 src: '/data/src/p_1_r.png',
                 img: null
             }
+        }
+    }
+
+    weapons = {
+        a: {
+            src: '/data/src/w_a.png',
+            img: null
         }
     }
 
@@ -43,6 +60,7 @@ class Res {
                 this.zombies[zombie_type][action_name].img = img
             }
         }
+
         for (let player_type in this.players) {
             for (let action_name in this.players[player_type]) {
                 need++
@@ -56,6 +74,19 @@ class Res {
                 }
                 this.players[player_type][action_name].img = img
             }
+        }
+
+        for (let weapon_type in this.weapons) {
+            need++
+            let img = new Image();
+            img.src = this.weapons[weapon_type].src
+            img.onload = function() {
+                loaded++
+                if (loaded == need) {
+                    game.resources_loaded = true
+                }
+            }
+            this.weapons[weapon_type].img = img
         }
     }
 
@@ -73,6 +104,10 @@ class Res {
             action = 'right'
         }
         return this.players[type][action].img
+    }
+
+    getWeapon(type) {
+        return this.weapons[type].img
     }
 
 }
