@@ -27,7 +27,7 @@ func newWeaponContainer() *WeaponA {
 	timeout := int64(time.Second)
 	criticalChance := float64(10)
 	criticalDamage := float64(10)
-	count := 100
+	count := 3
 	live_time := int64(10000)
 
 	return &WeaponA{
