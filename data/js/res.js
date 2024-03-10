@@ -43,6 +43,11 @@ class Res {
         }
     }
 
+    background = {
+        src: '/data/src/background.png',
+        img: null
+    }
+
     init() {
         let loaded = 0
         let need = 0
@@ -88,6 +93,10 @@ class Res {
             }
             this.weapons[weapon_type].img = img
         }
+
+        let img = new Image();
+        img.src = this.background.src
+        this.background.img = img
     }
 
     getZombie(type, directionIsRight) {
@@ -108,6 +117,10 @@ class Res {
 
     getWeapon(type) {
         return this.weapons[type].img
+    }
+
+    getBackground() {
+        return this.background.img
     }
 
 }

@@ -12,7 +12,6 @@ class WeaponA {
     y = 0
 
 
-
     static create(player, props) {
         let weapon = new WeaponA()
         weapon.player = player
@@ -31,8 +30,6 @@ class WeaponA {
     
         this.x += speedX * deltaTime
         this.y += speedY * deltaTime
-
-        
         
         // game.ctx.fillStyle = "black";
         // game.ctx.beginPath();
@@ -46,7 +43,6 @@ class WeaponA {
 
         game.ctx.rotate(-(this.angle*-1));
         game.ctx.translate(-(this.x), -(this.y));
-        //game.ctx.restore();
 
         if (this.created_time + this.live_time < Date.now()) {
             this.isFinished = true

@@ -27,7 +27,7 @@ func newWeaponContainer() *WeaponA {
 	timeout := int64(time.Second)
 	criticalChance := float64(10)
 	criticalDamage := float64(10)
-	count := 3
+	count := 1
 	live_time := int64(10000)
 
 	return &WeaponA{
@@ -98,18 +98,20 @@ func (w *WeaponA) addTile(player *Player, game *Game) []byte {
 }
 
 func (w *WeaponA) getUpgrades() []int {
-	return []int{1, 2, 3, 4}
+	return []int{1, 2, 3, 4, 5}
 }
 
 func (w *WeaponA) upgrade(upgrade int) {
 	switch upgrade {
 	case 1:
-		w.damage = w.damage * 2
+		w.damage += 2
 	case 2:
-		w.timeout = int64(float64(w.timeout) * 0.2)
+		w.timeout -= int64(float64(w.timeout) * 0.01)
 	case 3:
-		w.criticalChance = w.criticalChance * 1.1
+		w.criticalChance = w.criticalChance * 1.01
 	case 4:
-		w.criticalDamage = w.criticalDamage * 1.1
+		w.criticalDamage = w.criticalDamage * 1.01
+	case 5:
+		w.count++
 	}
 }

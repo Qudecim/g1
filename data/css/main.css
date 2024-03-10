@@ -28,10 +28,10 @@ body {
     margin: 10px;
     border-radius: 5px;
     background: #fff;
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 200px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     font-size: 18px;
     border: 1px solid #ddd;
@@ -49,4 +49,21 @@ body {
     position: absolute;
     right: 0;
     top: 0;
+}
+
+.upgrade_img_container {
+    overflow: hidden; 
+    border-radius: 5px;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.upgrade_img {
+    width: 100px;
+    height: 100px;
+}
+
+.upgrade_text {
+    text-align: center;
 }

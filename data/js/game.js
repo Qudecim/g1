@@ -3,6 +3,9 @@ class Game {
     canvas = null
     ctx = null
 
+    width = 1500
+    height = 800
+
     id = null
     
     players = {}
@@ -36,7 +39,6 @@ class Game {
     }
 
     draw(deltaTime) {
-
         let now = new Date().getTime()
         let fps = now - this.step_fps;
         if (fps < 1000) {
@@ -50,6 +52,14 @@ class Game {
         
         this.ctx.fillStyle = "#27ae60";
         this.ctx.fillRect(0,0, 1500, 800);
+
+        // let tile_width = Math.round(this.width / 100);
+        // let tile_height = Math.round(this.height / 100);
+        // for (let ih = 0; ih < tile_height; ih++) {
+        //     for (let iw = 0; iw < tile_width; iw++) {
+        //         this.ctx.drawImage(res.getBackground(), 0, 0, 1024, 1024, iw * 100, ih * 100, 100, 100)
+        //     }
+        // }
 
         if (!this.resources_loaded) {
             return

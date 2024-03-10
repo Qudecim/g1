@@ -4,6 +4,8 @@ class Main {
         let canvas = document.getElementById("canvas")
         let ctx = canvas.getContext("2d")
 
+        data = new Data()
+
         res = new Res()
         res.init()
 
@@ -40,6 +42,7 @@ game = null
 transport = null
 control = null
 ui = null
+data = null
 
 lastFrameTime = 0
 

@@ -61,12 +61,12 @@ func playerGetUpgrades() []int {
 func playerUpgrade(player *Player, upgrade int) {
 	switch upgrade {
 	case 1:
-		player.maxSpeed = player.maxSpeed * 2
+		player.maxSpeed += player.maxSpeed * 0.1
 	case 2:
-		player.maxHP = player.maxHP + 10
+		player.maxHP += 10
 	case 3:
-		player.evasion = player.evasion + 1
+		player.evasion += 1
 	case 4:
-		player.armor = player.armor + 1
+		player.armor += 1
 	}
 }
